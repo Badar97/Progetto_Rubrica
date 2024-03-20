@@ -229,14 +229,15 @@ class RubricaGUI:
             if not os.path.exists("informazioni"):
                 os.makedirs("informazioni")
             for persona in self.persone:
-                nome_file = f"{persona.nome}-{persona.cognome}.txt"
+                nome_file_base = f"{persona.nome}-{persona.cognome}.txt"
+                nome_file = nome_file_base
                 cnt = 1
                 while os.path.exists(os.path.join("informazioni", nome_file)):
                     with open(os.path.join("informazioni", nome_file), "r") as file:
                         lines = file.readlines()
-                        det = [line.strip().split(': ')[1] for line in lines[:3]]
+                        det = [line.strip().split(': ')[1] for line in lines[-3:]]
                     if det == [persona.indirizzo, persona.telefono, str(persona.eta)]:
-                        pass
+                        break
                     else:
                         nome_file = f"{persona.nome}-{persona.cognome}-{cnt}.txt"
                         cnt += 1
