@@ -1,0 +1,4 @@
+badar;ali;via falco 9;1200987;21
+mario;rossi;via monti 8;12009987;23
+lugi;neri;via roma 90;3450098;26
+giorgio;campioni;via cavour 7;332456;25

@@ -1,0 +1,5 @@
+Nome: lugi
+Cognome: neri
+Indirizzo: via roma 90
+Telefono: 3450098
+Eta: 26
