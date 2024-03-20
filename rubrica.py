@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-import os
 from PIL import Image, ImageTk
+import json
+import os
 
 class Persona:
     def __init__(self, nome, cognome, indirizzo, telefono, eta=0):
@@ -22,24 +23,24 @@ class RubricaGUI:
 
         self.crea_tabella()
         #self.crea_bottoni()
-        self.crea_toolbar()
+        self.crea_toolbar_btn()
         self.carica_dati()
 
     def crea_tabella(self):
-        self.table = ttk.Treeview(self.root, columns=('Nome', 'Cognome', 'Telefono', 'Indirizzo', 'Eta'))
+        self.table = ttk.Treeview(self.root, columns=('Nome', 'Cognome', 'Telefono'))
         self.table.heading('#0', text='ID')
         self.table.heading('Nome', text='Nome')
         self.table.heading('Cognome', text='Cognome')
-        self.table.heading('Indirizzo', text='Indirizzo')
+        #self.table.heading('Indirizzo', text='Indirizzo')
         self.table.heading('Telefono', text='Telefono')
-        self.table.heading('Eta', text='Eta')
+        #self.table.heading('Eta', text='Eta')
 
         self.table.column('#0', width=100)
         self.table.column('Nome', width=100)
         self.table.column('Cognome', width=100)
+        #self.table.column('Indirizzo', width=100)
         self.table.column('Telefono', width=100)
-        self.table.column('Indirizzo', width=100)
-        self.table.column('Eta', width=100)
+        #self.table.column('Eta', width=100)
 
         self.table.pack(padx=5, pady=5)
 
@@ -62,21 +63,21 @@ class RubricaGUI:
         elimina_btn = tk.Button(frame, text="Elimina", command=self.elimina_persona)
         elimina_btn.grid(row=0, column=2, padx=5)
     """
-    def crea_toolbar(self):
+    def crea_toolbar_btn(self):
         self.toolbar = ttk.Frame(self.root)
         self.toolbar.pack(side=tk.TOP, fill=tk.X)
 
-        nuovo_btn_img = Image.open("img/nuovo_icon.jpg").resize((20, 20), Image.ANTIALIAS)
+        nuovo_btn_img = Image.open("img/nuovo_icon.jpg").resize((20, 20), Image.Resampling.LANCZOS)
         self.nuovo_btn_img = ImageTk.PhotoImage(nuovo_btn_img)
         nuovo_btn = ttk.Button(self.toolbar, image=self.nuovo_btn_img, command=self.apri_editor)
         nuovo_btn.grid(row=0, column=0, padx=5, pady=5)
 
-        modifica_btn_img = Image.open("img/modifica_icon.png").resize((20, 20), Image.ANTIALIAS)
+        modifica_btn_img = Image.open("img/modifica_icon.png").resize((20, 20), Image.Resampling.LANCZOS)
         self.modifica_btn_img = ImageTk.PhotoImage(modifica_btn_img)
         modifica_btn = ttk.Button(self.toolbar, image=self.modifica_btn_img, command=self.modifica_persona)
         modifica_btn.grid(row=0, column=1, padx=5, pady=5)
 
-        elimina_btn_img = Image.open("img/elimina_icon.png").resize((20, 20), Image.ANTIALIAS)
+        elimina_btn_img = Image.open("img/elimina_icon.png").resize((20, 20), Image.Resampling.LANCZOS)
         self.elimina_btn_img = ImageTk.PhotoImage(elimina_btn_img)
         elimina_btn = ttk.Button(self.toolbar, image=self.elimina_btn_img, command=self.elimina_persona)
         elimina_btn.grid(row=0, column=2, padx=5, pady=5)
@@ -208,6 +209,59 @@ class RubricaGUI:
                 file.write(f"Telefono: {persona.telefono}\n")
                 file.write(f"Eta: {persona.eta}\n")
 
+class Utente:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+class FinestraLogin:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Login")
+
+        self.username_entry = tk.Entry(self.root)
+        self.username_entry.grid(row=0, column=1, padx=5, pady=5)
+        self.password_entry = tk.Entry(self.root, show="*")
+        self.password_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(self.root, text="Username:").grid(row=0, column=0, padx=5, pady=5)
+        tk.Label(self.root, text="Password:").grid(row=1, column=0, padx=5, pady=5)
+
+        self.utenti_registrati = self.carica_utenti("utenti.txt")
+
+        login_btn = tk.Button(self.root, text="LOGIN", command=self.verifica_login)
+        login_btn.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+    def carica_utenti(self, nome_file):
+        try:
+            with open(nome_file, "r") as file:
+                utenti_registrati = json.load(file)
+        except FileNotFoundError:
+            messagebox.showerror("Errore! Non esiste il file!")
+            utenti_registrati = {}
+        return utenti_registrati
+
+    def verifica_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        if self.verifica_credenziali(username, password):
+            self.root.destroy()
+            finestra_principale = tk.Tk()
+            app = RubricaGUI(finestra_principale)
+            finestra_principale.mainloop()
+        else:
+            messagebox.showerror("Errore", "Login errato")
+
+    def verifica_credenziali(self, username, password):
+        if username in self.utenti_registrati and self.utenti_registrati[username] == password:
+            return True
+        else:
+            return False
+
+root_login = tk.Tk()
+finestra_login = FinestraLogin(root_login)
+root_login.mainloop()
 
 #root = tk.Tk()
 #app = RubricaGUI(root)
