@@ -13,6 +13,35 @@ class Persona:
         self.telefono = telefono
         self.eta = eta
 
+class Scanner:
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def leggi_file(self):
+        try:
+            with open(self.file_path, 'r') as file:
+                file_content = file.read()
+                return file_content
+        except FileNotFoundError:
+            messagebox.showinfo('Info', f"Il file '{self.file_path}' non è stato trovato.")
+            return None
+        except Exception as e:
+            messagebox.showerror('Errore', f"Si è verificato un errore durante la lettura del file: {e}")
+            return None
+
+class PrintStream:
+    def __init__(self, filename):
+        try:
+            self.file = open(filename, "w")
+        except IOError:
+            messagebox.showerror('Errore', "Errore durante l'apertura del file")
+    
+    def println(self, text):
+        print(text, file=self.file)
+    
+    def close(self):
+        self.file.close()
+
 class RubricaGUI:
     def __init__(self, root):
         self.root = root
@@ -146,7 +175,6 @@ class RubricaGUI:
         telefono = self.telefono_entry.get()
         eta = self.eta_entry.get()
 
-
         if self.persona_attuale:
             self.persona_attuale.nome = nome
             self.persona_attuale.cognome = cognome
@@ -168,47 +196,59 @@ class RubricaGUI:
 
     def carica_dati(self):
         try:
-            with open("informazioni.txt", "r") as file:
-                for line in file:
-                    data = line.strip().split(';')
-                    nome = data[0]
-                    cognome = data[1]
-                    indirizzo = data[2]
-                    telefono = data[3]
-                    eta = int(data[4])
-                    persona = Persona(nome, cognome, indirizzo, telefono, eta)
-                    self.persone.append(persona)
-            self.aggiorna_tabella()
-        except FileNotFoundError:
-            pass
+            file_reader = Scanner("informazioni.txt")
+            file_content = file_reader.leggi_file()
+            if file_content:
+                lines = file_content.split('\n')
+                for line in lines:
+                    data = line.split(';')
+                    if len(data) >= 5:
+                        nome = data[0]
+                        cognome = data[1]
+                        indirizzo = data[2]
+                        telefono = data[3]
+                        eta = int(data[4])
+                        persona = Persona(nome, cognome, indirizzo, telefono, eta)
+                        self.persone.append(persona)
+                self.aggiorna_tabella()
+        except Exception as e:
+            messagebox.showerror('Errore', f"Si è verificato un errore durante il caricamento dei dati: {e}")
+
     
     def salva_dati(self):
-        with open("informazioni.txt", "w") as file:
+        try:
+            print_stream = PrintStream("informazioni.txt")
             for persona in self.persone:
-                file.write(f"{persona.nome};{persona.cognome};{persona.indirizzo};{persona.telefono};{persona.eta}\n")
+                print_stream.println(f"{persona.nome};{persona.cognome};{persona.indirizzo};{persona.telefono};{persona.eta}")
+            print_stream.close()
+        except FileNotFoundError:
+            pass
 
     def salva_dati_mod(self):
-        if not os.path.exists("informazioni"):
-            os.makedirs("informazioni")
-        for persona in self.persone:
-            nome_file = f"{persona.nome}-{persona.cognome}.txt"
-            cnt = 1
-            while os.path.exists(os.path.join("informazioni", nome_file)):
-                with open(os.path.join("informazioni", nome_file), "r") as file:
-                    lines = file.readlines()
-                    det = [line.strip().split(': ')[1] for line in lines[:3]]
-                if det == [persona.indirizzo, persona.telefono, str(persona.eta)]:
-                    break
-                else:
-                    nome_file = f"{persona.nome}-{persona.cognome}-{cnt}.txt"
-                    cnt += 1
-            with open(os.path.join("informazioni", nome_file), "w") as file:
-                file.write(f"Nome: {persona.nome}\n")
-                file.write(f"Cognome: {persona.cognome}\n")
-                file.write(f"Indirizzo: {persona.indirizzo}\n")
-                file.write(f"Telefono: {persona.telefono}\n")
-                file.write(f"Eta: {persona.eta}\n")
-
+        try:
+            if not os.path.exists("informazioni"):
+                os.makedirs("informazioni")
+            for persona in self.persone:
+                nome_file = f"{persona.nome}-{persona.cognome}.txt"
+                cnt = 1
+                while os.path.exists(os.path.join("informazioni", nome_file)):
+                    with open(os.path.join("informazioni", nome_file), "r") as file:
+                        lines = file.readlines()
+                        det = [line.strip().split(': ')[1] for line in lines[:3]]
+                    if det == [persona.indirizzo, persona.telefono, str(persona.eta)]:
+                        pass
+                    else:
+                        nome_file = f"{persona.nome}-{persona.cognome}-{cnt}.txt"
+                        cnt += 1
+                print_stream = PrintStream(os.path.join("informazioni", nome_file))
+                print_stream.println(f"Nome: {persona.nome}")
+                print_stream.println(f"Cognome: {persona.cognome}")
+                print_stream.println(f"Indirizzo: {persona.indirizzo}")
+                print_stream.println(f"Telefono: {persona.telefono}")
+                print_stream.println(f"Eta: {persona.eta}")
+            messagebox.showinfo("Info", "Dati salvati in file nella cartella 'informazioni'")
+        except FileNotFoundError:
+            pass
 class Utente:
     def __init__(self, username, password):
         self.username = username
@@ -237,7 +277,7 @@ class FinestraLogin:
             with open(nome_file, "r") as file:
                 utenti_registrati = json.load(file)
         except FileNotFoundError:
-            messagebox.showerror("Errore! Non esiste il file!")
+            messagebox.showerror("Errore",  "Non esiste il file")
             utenti_registrati = {}
         return utenti_registrati
 
