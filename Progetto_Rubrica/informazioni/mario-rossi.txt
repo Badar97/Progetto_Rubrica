@@ -1,0 +1,5 @@
+Nome: mario
+Cognome: rossi
+Indirizzo: via monti 8
+Telefono: 12009987
+Eta: 23
