@@ -1,5 +1,0 @@
-Nome: giorgio
-Cognome: campioni
-Indirizzo: via cavour 7
-Telefono: 332456
-Eta: 25
