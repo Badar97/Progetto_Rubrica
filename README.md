@@ -21,6 +21,8 @@ Nell’interfaccia	 dell’applicazione ci	 deve	essere	una	finestra	principale,
 - modifica:	serve	per	modificare	una	persona	esistente
 - elimina:	serve	per	eliminare	una	persona	esistente
 
+I tasti	 nuovo	 e	 modifica	 devono	 portare	 all’apertura	 di	 una	 seconda	 finestra,	 chiamata	 editorpersona,	che	serve	per	inserire	e modificare	i	dati	di	una	persona.	Questa	finestra	deve	avere	una	serie	 di	 campi,	 divisi	 per	 riga,	 nomeCampo	– valoreCampo,	 per	 ogni	 dato	 della	 persona. Questa	 finestra	 è	 sostanzialmente	 un	 modulo	 di	 inserimento	 dati	 per	 un	elemento	Persona.	Questa	finestra	deve	avere	due	bottoni:	salva	e	annulla.	
+
  
   
  
