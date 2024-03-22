@@ -24,7 +24,13 @@ Nell’interfaccia	 dell’applicazione ci	 deve	essere	una	finestra	principale,
 I tasti	 nuovo	 e	 modifica	 devono	 portare	 all’apertura	 di	 una	 seconda	 finestra,	 chiamata	 editor-persona,	che	serve	per	inserire	e modificare	i	dati	di	una	persona.	Questa	finestra	deve	avere	una	serie	 di	 campi,	 divisi	 per	 riga,	 nomeCampo	– valoreCampo,	 per	 ogni	 dato	 della	 persona. Questa	 finestra	 è	 sostanzialmente	 un	 modulo	 di	 inserimento	 dati	 per	 un	elemento	Persona.	Questa	finestra	deve	avere	due	bottoni:	`salva`	e	`annulla`.	
 
 ### Persistenza
+Procederemo	 alla	 realizzazione	 della	 persistenza	 mediante	 salvataggio	 su	 file. Tramite	 la	 classe	`Scanner`	leggeremo	da	file	e	tramite	la	classe	`PrintStream`	scriveremo	su	file.	Nel file inseriremo il contenuto dei dati delle persone seguendo la seguente codifica:
+```zsh 
+Steve;Jobs;via Cupertino 13;0612344;56
+Bill;Gates;via Redmond 10;06688989;60
+Babbo;Natale;via del Polo Nord;00000111;99
+```
 
- 
+Esportare il programma in un file `.exe` con il nome `Rubrica.exe`
   
  
