@@ -34,7 +34,10 @@ Babbo;Natale;via del Polo Nord;00000111;99
 ### Salvataggio dati su database
 Sfruttare la connessione a `MySQL` con `Python`.  Aggiungere  un	file `schema_database.sql` che	sarà	un	file	di	testo	contenente	tutte	le	istruzioni SQL	da	lanciare	per	la	costruzione del	database	stesso. Creare un terzo file `credenziali_database.properties` in modo da parametrizzare le credenziali cosicchè ogni utente possa inserire le proprie.
 
-Esportare il programma in un file `.exe` con il nome `Rubrica.exe`
+Esportare il programma in un file `.exe` con il nome `Rubrica.exe`, fare la seguente funzione aprendo il terminale nella cartella dove è presente il file .py, usando il seguente comando:
+```zsh 
+pyinstaller rubrica.py --noconsole --onefile
+```
 
 ### Pacchetto finale
 il pacchetto finale da inviare come	 progettino rubrica sarà un file zippato contenente:
