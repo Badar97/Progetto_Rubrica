@@ -5,6 +5,10 @@ from PIL import Image, ImageTk
 import json
 import os
 
+import mysql.connector
+from mysql.connector import Error
+import configparser
+
 class Persona:
     def __init__(self, nome, cognome, indirizzo, telefono, eta=0):
         self.nome = nome
@@ -53,7 +57,83 @@ class RubricaGUI:
         self.crea_tabella()
         #self.crea_bottoni()
         self.crea_toolbar_btn()
-        self.carica_dati()
+        self.conn = self.connetti_database()
+        if self.conn:
+            print("Connessione al database avvenuta con successo!")
+            self.cursor = self.conn.cursor()
+            self.crea_database()
+            self.carica_dati()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.chiusura_database)
+
+    def connetti_database(self):
+        try:
+            config = configparser.ConfigParser()
+            config.read('credenziali_database.properties')
+            username = config.get('database', 'username')
+            password = config.get('database', 'password')
+            hostname = config.get('database', 'hostname')
+            porta = config.get('database', 'porta')
+            #database = config.get('database', 'database')
+            conn = mysql.connector.connect(
+                host=hostname,
+                port=porta,
+                user=username,
+                password=password
+                #db=database
+            )
+            return conn
+        except Error as e:
+            print(f"Errore di connessione al database: {e}")
+            return None
+    
+    def chiusura_database(self):
+        if self.conn:
+            self.cursor.close()
+            self.conn.close()
+            print("Chiusura del database avvenuta con successo!")
+        self.root.destroy()
+
+    """
+    def crea_database(self):
+        try:
+            with open('schema_database.sql', 'r') as file:
+                script_sql = file.read()
+                self.cursor.execute(script_sql, multi=True)
+                #self.cursor.fetchall()
+                #self.conn.commit()
+                print("database creato")
+        except Error as e:
+            print(f"Errore durante l'esecuzione dello script SQL: {e}")
+    """
+    def crea_database(self):
+        try:
+            with open('schema_database.sql', 'r') as file:
+                script_sql = file.read()
+                queries = script_sql.split(';')  # Dividi le query separate dal punto e virgola
+                for query in queries:
+                    query = query.strip()
+                    if query:  # Ignora le stringhe vuote
+                        self.cursor.execute(query)
+                self.conn.commit()
+                print("Database e tabella create con successo!")
+        except Error as e:
+            print(f"Errore durante l'esecuzione dello script SQL: {e}")
+
+    
+    def salva_dati_db(self):
+        try:
+            for persona in self.persone:
+                insert_query = """INSERT INTO persone (nome, cognome, indirizzo, telefono, eta)
+                VALUES (%s, %s, %s, %s, %s)"""
+                data = (persona.nome, persona.cognome, persona.indirizzo, persona.telefono, persona.eta)
+                self.cursor.execute(insert_query, data)
+                #self.cursor.close()
+            #self.cursor.fetchall()
+            self.conn.commit()
+            print("Dati salvati nel database con successo!")
+        except Error as e:
+            print(f"Errore durante il salvataggio dei dati nel database: {e}")
 
     def crea_tabella(self):
         self.table = ttk.Treeview(self.root, columns=('Nome', 'Cognome', 'Telefono'))
@@ -189,6 +269,7 @@ class RubricaGUI:
         self.aggiorna_tabella()
         self.salva_dati()
         self.salva_dati_mod()
+        self.salva_dati_db()
         self.editor.destroy()
 
     def annulla_modifica(self):
@@ -268,11 +349,17 @@ class FinestraLogin:
         tk.Label(self.root, text="Username:").grid(row=0, column=0, padx=5, pady=5)
         tk.Label(self.root, text="Password:").grid(row=1, column=0, padx=5, pady=5)
 
-        self.utenti_registrati = self.carica_utenti("utenti.txt")
+        #self.utenti_registrati = self.carica_utenti("utenti.txt")
+        self.utenti_registrati = {
+            "admin": "password",
+            "user1": "1234",
+            "root": ""
+        }
 
         login_btn = tk.Button(self.root, text="LOGIN", command=self.verifica_login)
         login_btn.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
-
+    
+    """
     def carica_utenti(self, nome_file):
         try:
             with open(nome_file, "r") as file:
@@ -281,6 +368,7 @@ class FinestraLogin:
             messagebox.showerror("Errore",  "Non esiste il file")
             utenti_registrati = {}
         return utenti_registrati
+    """
 
     def verifica_login(self):
         username = self.username_entry.get()
