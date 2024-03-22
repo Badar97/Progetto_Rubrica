@@ -31,6 +31,23 @@ Bill;Gates;via Redmond 10;06688989;60
 Babbo;Natale;via del Polo Nord;00000111;99
 ```
 
+### Salvataggio dati su database
+Sfruttare la connessione a `MySQL` con `Python`.  Aggiungere  un	file `schema_database.sql` che	sarà	un	file	di	testo	contenente	tutte	le	istruzioni SQL	da	lanciare	per	la	costruzione del	database	stesso. Creare un terzo file `credenziali_database.properties` in modo da parametrizzare le credenziali cosicchè ogni utente possa inserire le proprie.
+
 Esportare il programma in un file `.exe` con il nome `Rubrica.exe`
-  
- 
+
+### Pacchetto finale
+il pacchetto finale da inviare come	 progettino rubrica sarà un file zippato contenente:
+- `Rubrica.exe`
+- `schema_database.sql`
+- `credenziali_database.properties`
+
+L’utente	che	dovrà	provare	l’applicazione	dovrà	in	sequenza:
+  1. decomprimere	l’archivio `.zip`
+  2. aprire	 e sostituire le credenziali del proprio sistema MySQL dentro `credenziali_database.properties`
+  3. lanciare	sul	proprio sistema MySQL lo script di costruzione database	`schema_database.sql`
+  4. eseguire	`Rubrica.exe`
+
+
+
+
