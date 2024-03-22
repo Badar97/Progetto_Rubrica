@@ -27,7 +27,6 @@ class Scanner:
                 file_content = file.read()
                 return file_content
         except FileNotFoundError:
-            messagebox.showinfo('Info', f"Il file '{self.file_path}' non è stato trovato.")
             return None
         except Exception as e:
             messagebox.showerror('Errore', f"Si è verificato un errore durante la lettura del file: {e}")
@@ -59,7 +58,7 @@ class RubricaGUI:
         self.crea_toolbar_btn()
         self.conn = self.connetti_database()
         if self.conn:
-            print("Connessione al database avvenuta con successo!")
+            #print("Connessione al database avvenuta con successo!")
             self.cursor = self.conn.cursor()
             self.crea_database()
             self.carica_dati()
@@ -84,28 +83,16 @@ class RubricaGUI:
             )
             return conn
         except Error as e:
-            print(f"Errore di connessione al database: {e}")
+            messagebox.showerror("Errore", f"Errore di connessione al database: {e}")
             return None
     
     def chiusura_database(self):
         if self.conn:
             self.cursor.close()
             self.conn.close()
-            print("Chiusura del database avvenuta con successo!")
+            #print("Chiusura del database avvenuta con successo!")
         self.root.destroy()
 
-    """
-    def crea_database(self):
-        try:
-            with open('schema_database.sql', 'r') as file:
-                script_sql = file.read()
-                self.cursor.execute(script_sql, multi=True)
-                #self.cursor.fetchall()
-                #self.conn.commit()
-                print("database creato")
-        except Error as e:
-            print(f"Errore durante l'esecuzione dello script SQL: {e}")
-    """
     def crea_database(self):
         try:
             with open('schema_database.sql', 'r') as file:
@@ -116,10 +103,9 @@ class RubricaGUI:
                     if query:  # Ignora le stringhe vuote
                         self.cursor.execute(query)
                 self.conn.commit()
-                print("Database e tabella create con successo!")
+                #print("Database e tabella create con successo!")
         except Error as e:
-            print(f"Errore durante l'esecuzione dello script SQL: {e}")
-
+            messagebox.showerror("Errore", f"Errore durante l'esecuzione dello script SQL: {e}")
     
     def salva_dati_db(self):
         try:
@@ -131,9 +117,9 @@ class RubricaGUI:
                 #self.cursor.close()
             #self.cursor.fetchall()
             self.conn.commit()
-            print("Dati salvati nel database con successo!")
+            #print("Dati salvati nel database con successo!")
         except Error as e:
-            print(f"Errore durante il salvataggio dei dati nel database: {e}")
+            messagebox.showerror("Errore",f"Errore durante il salvataggio dei dati nel database: {e}")
 
     def crea_tabella(self):
         self.table = ttk.Treeview(self.root, columns=('Nome', 'Cognome', 'Telefono'))
@@ -328,7 +314,7 @@ class RubricaGUI:
                 print_stream.println(f"Indirizzo: {persona.indirizzo}")
                 print_stream.println(f"Telefono: {persona.telefono}")
                 print_stream.println(f"Eta: {persona.eta}")
-            messagebox.showinfo("Info", "Dati salvati in file nella cartella 'informazioni'")
+            #messagebox.showinfo("Info", "Dati salvati in file nella cartella 'informazioni'")
         except FileNotFoundError:
             pass
 class Utente:
