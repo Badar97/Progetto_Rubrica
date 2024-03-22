@@ -38,6 +38,14 @@ Esportare il programma in un file `.exe` con il nome `Rubrica.exe`, fare la segu
 ```zsh 
 pyinstaller rubrica.py --noconsole --onefile
 ```
+All'avvio del file .exe si aprira una finestra dove si dovrà inserire username e password dati dal seguente dizionario (si possono usare qualsiasi di esse):
+```zsh 
+{
+  "admin": "password",
+  "user1": "1234",
+  "root": ""
+}
+```
 
 ### Pacchetto finale
 il pacchetto finale da inviare come	 progettino rubrica sarà un file zippato contenente:
